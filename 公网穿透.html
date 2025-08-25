@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FRP 内网穿透终极部署协议</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Noto+Sans+SC:wght@300;400;700&display=swap');
+
+        :root {
+            --primary-glow: #00ddff;
+            --secondary-glow: #ff00de;
+            --background-color: #0b0c1e;
+            --text-color: #e0e0e0;
+            --header-color: #ffffff;
+            --accent-color: #00aaff;
+            --border-color: rgba(0, 221, 255, 0.3);
+            --code-bg: #1a1b2f;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.8;
+            padding: 2rem;
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(0, 221, 255, 0.1), transparent 30%),
+                radial-gradient(circle at 80% 90%, rgba(255, 0, 222, 0.1), transparent 30%);
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            background-color: rgba(11, 12, 30, 0.7);
+            box-shadow: 0 0 20px var(--primary-glow), inset 0 0 15px rgba(0, 221, 255, 0.2);
+        }
+
+        h1, h2, h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--header-color);
+            text-shadow: 0 0 5px var(--primary-glow);
+            letter-spacing: 2px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+            margin-top: 2rem;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            color: var(--primary-glow);
+            border: none;
+            text-shadow: 0 0 15px var(--primary-glow), 0 0 25px var(--secondary-glow);
+        }
+
+        .mission-brief {
+            text-align: center;
+            font-size: 1.1rem;
+            color: var(--accent-color);
+            margin-bottom: 3rem;
+            border: 1px dashed var(--border-color);
+            padding: 1rem;
+            border-radius: 5px;
+        }
+
+        .phase {
+            margin-bottom: 3rem;
+            border-left: 3px solid var(--primary-glow);
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .phase::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 0;
+            width: 16px;
+            height: 16px;
+            background-color: var(--primary-glow);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .step {
+            margin-bottom: 1.5rem;
+        }
+
+        strong {
+            color: var(--accent-color);
+            font-weight: 700;
+        }
+
+        code {
+            background-color: var(--code-bg);
+            border: 1px solid var(--border-color);
+            padding: 0.2em 0.5em;
+            border-radius: 5px;
+            font-family: 'Courier New', Courier, monospace;
+            color: var(--text-color);
+            word-wrap: break-word;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            overflow-x: auto;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        pre code {
+            border: none;
+            padding: 0;
+        }
+
+        .warning {
+            border-left: 5px solid #ffcc00;
+            padding: 1rem;
+            background-color: rgba(255, 204, 0, 0.1);
+            border-radius: 5px;
+            margin: 1rem 0;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 4rem;
+            color: var(--accent-color);
+            font-family: 'Orbitron', sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>FRP 内网穿透终极部署协议</h1>
+        <p class="mission-brief">任务档案：建立一条从公网到内网Windows主机的稳定时空隧道，用于传输N8N服务数据流。规避一切环境陷阱，采用最稳健的 Docker 协议完成部署。</p>
+
+        <!-- ==================== PHASE 01: 公网中继节点部署 ==================== -->
+        <div class="phase">
+            <h2>Phase 01: 公网中继节点部署 (Server-Side)</h2>
+            <div class="step">
+                <h3>1.1 // 节点环境初始化: Docker引擎安装</h3>
+                <p>为应对宿主机环境的不可预知性，我们选择部署标准化的容器引擎作为服务基石。</p>
+                <p><strong>指令A：同步星际软件包数据库</strong></p>
+                <pre><code>sudo apt-get update</code></pre>
+                <p><strong>指令B：安装Docker.io引擎</strong></p>
+                <pre><code>sudo apt-get install docker.io -y</code></pre>
+                <p><strong>指令C：执行“Hello World”协议，验证引擎状态</strong></p>
+                <pre><code>sudo docker run hello-world</code></pre>
+                <p><strong>校验标准：</strong>控制台必须返回包含 <code>Hello from Docker!</code> 的确认信号。</p>
+            </div>
+            <div class="step">
+                <h3>1.2 // 防火墙矩阵配置: 端口矩阵授权</h3>
+                <p>在云服务商（阿里云）的安全矩阵中，为数据流配置入站规则。每个端口都是一个独立的信道。</p>
+                <p><strong>授权目标：</strong>创建三条独立的TCP入站规则，授权来源为 <code>0.0.0.0/0</code> (任意位置)。</p>
+                <ul>
+                    <li><strong>信道 7000:</strong> 用于FRP核心通信链路。</li>
+                    <li><strong>信道 7500:</strong> 用于FRP仪表盘监控界面。</li>
+                    <li><strong>信道 8081:</strong> 分配给N8N服务的专用公网隧道出口。</li>
+                </ul>
+            </div>
+            <div class="step">
+                <h3>1.3 // 启动FRPS服务容器: 一键部署协议</h3>
+                <p>执行终极部署指令，该指令将自动从Docker Hub拉取稳定版镜像，并以后台守护模式启动服务容器。</p>
+                <pre><code>sudo docker run --restart=always -d \
+--name frps-server \
+-p 7000:7000 \
+-p 7500:7500 \
+-p 8081:8081 \
+snowdreamtech/frps:0.52.3</code></pre>
+                 <p><strong>校验标准：</strong>执行 <code>sudo docker ps</code>，必须能观测到名为 <code>frps-server</code> 的容器，且其状态为 <code>Up</code>。</p>
+            </div>
+        </div>
+
+        <!-- ==================== PHASE 02: 内网客户端部署 ==================== -->
+        <div class="phase">
+            <h2>Phase 02: 内网客户端部署 (Client-Side)</h2>
+            <div class="step">
+                <h3>2.1 // 客户端程序获取</h3>
+                <p>从FRP官方发布矩阵下载适用于Windows (amd64) 的客户端程序包，并解压至本地目录。</p>
+            </div>
+            <div class="step">
+                <h3>2.2 // 终端安全协议配置</h3>
+                <div class="warning">
+                    <strong>安全警报：</strong>Windows Defender可能会将FRP客户端误判为威胁。必须将FRP程序所在文件夹添加至“病毒和威胁防护”的排除项，以确保程序执行权限。
+                </div>
+            </div>
+            <div class="step">
+                <h3>2.3 // 客户端配置文件校准</h3>
+                <p>在FRP客户端目录中，创建名为 <code>frpc.ini</code> 的配置文件。这是客户端连接中继节点的唯一凭证。</p>
+                <pre><code>[common]
+server_addr = 你的-服务器-公网-IP
+server_port = 7000
+
+[n8n-service-tcp]
+type = tcp
+local_ip = 127.0.0.1
+local_port = 5678
+remote_port = 8081</code></pre>
+                <div class="warning">
+                    <strong>校准注意：</strong>确保 <code>server_addr</code> 字段被替换为真实的公网IP地址。确认文件名后缀为 <code>.ini</code>，而不是被Windows隐藏的 <code>.ini.txt</code>。
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== PHASE 03: 隧道激活与验证 ==================== -->
+        <div class="phase">
+            <h2>Phase 03: 隧道激活与验证</h2>
+            <div class="step">
+                <h3>3.1 // 激活客户端链路</h3>
+                <p>打开Windows PowerShell，导航至FRP客户端目录，执行激活指令。</p>
+                <pre><code>.\frpc.exe -c .\frpc.ini</code></pre>
+                <p><strong>校验标准：</strong>控制台必须返回 <code>login to server success</code> 和 <code>start proxy success</code> 的成功信号。</p>
+            </div>
+            <div class="step">
+                <h3>3.2 // 端到端数据流验证</h3>
+                <p>在任意终端的浏览器中，访问以下时空坐标：</p>
+                <pre><code>http://你的-服务器-公网-IP:8081</code></pre>
+                <p><strong>任务成功标志：</strong>目标N8N服务的界面被成功渲染。</p>
+            </div>
+        </div>
+        
+        <footer>MISSION ACCOMPLISHED</footer>
+    </div>
+
+</body>
+</html>
